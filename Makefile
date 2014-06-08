@@ -6,6 +6,7 @@ SUBDIR = Niklaus
 .PHONY: clean
 
 pdf:
+	pandoc --template $(SUBDIR)/template.tex $(SUBDIR)/RandomWalk.md -o $(SUBDIR)/RandomWalk.tex
 	rm -f $(MASTER).pdf
 	pdflatex $(MASTER).tex
 	bibtex $(SUBDIR) || true
