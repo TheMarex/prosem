@@ -1,0 +1,54 @@
+%% Encoding: ISO8859-1 %%
+
+%% titlepage.tex
+
+\def\usesf{}
+\let\usesf\sffamily % uncomment this line for normal TeX font
+
+\begin{titlepage}
+
+\setlength{\unitlength}{1pt}
+\begin{picture}(0,0)(160,770)
+\includegraphics[width=\paperwidth]{logos/KIT_Deckblatt.pdf}
+\end{picture}
+
+\thispagestyle{empty}
+
+\begin{center}
+\hbox{}
+\vfill
+{\usesf
+{\huge\bfseries Seminar\\
+                \seminartitle \par}
+\vskip 1.8cm
+{\Large Summer term 2014\\}
+\vskip 1cm
+
+\vskip 1.2cm
+Institute of Theoretical Informatics (ITI)\\
+Department of Informatics\\
+Karlsruhe Institute of Technology (KIT)\\
+\vskip 3cm
+\begin{tabular}{p{20mm}l}
+Betreuer: & {\usesf Jun.-Prof.\,Dr.~Dennis~Hofheinz} \\ % Please specify advisers here
+& Jun.-Prof.\,Dr.~Henning~Meyerhenke\\
+& Dr.~Roland~Glantz\\
+& Dipl.-Inform. ?. ?????????
+\end{tabular}
+}
+\end{center}
+\vfill
+\end{titlepage}
+
+\thispagestyle{empty}
+\ \vfill
+\begin{flushleft}
+  Copyright \(\copyright\) 2014 ITI and AUTHOR\\ % Please set AUTHOR to your full name
+  \ \\
+  Institute of Theoretical Informatics (ITI)\\
+  Department of Informatics\\
+  Karlsruhe Institute of Technology\\
+  Am Fasanengarten 5\\
+  76128 Karlsruhe
+\end{flushleft}
+\newpage

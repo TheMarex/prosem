@@ -1,0 +1,46 @@
+% Encoding: ISO8859-1
+
+% Based on thesisclass.cls of Timo Rohrberg, 2009
+\documentclass{iti-seminar}
+
+% Main document
+
+% Packages
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc} % Input in ISO 8859-1 (Latin1)
+
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{wrapfig}
+\usepackage{subfigure}
+\usepackage{url}
+
+\usepackage{latexsym}
+\usepackage{amstext}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+% Definitions
+\newcites{Niklaus}{References} % Please set NAME to your name
+\newcommand{\seminartitle}{Gems of Theoretical Computer Science}
+
+% PDF file data
+\hypersetup{
+ pdftitle={\seminartitle}
+}
+
+% Start of main document
+\begin{document}
+
+\frontmatter
+\include{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+
+% Main part
+\mainmatter
+{\includeTeX{Niklaus/RandomWalk}\relax} % please set NAME to your name and TITLE to the title of your work
+
+\end{document}
