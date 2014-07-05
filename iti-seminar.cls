@@ -29,6 +29,7 @@
 \usepackage{textcomp}
 %\usepackage{bibgerm}
 \usepackage{multibib}
+\usepackage{amsthm}
 
 \usepackage[raiselinks=true,
   a4paper,pdftex,colorlinks,bookmarks,
