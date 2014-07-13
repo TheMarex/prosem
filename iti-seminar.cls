@@ -25,6 +25,7 @@
 \usepackage[absolute,overlay]{textpos}
 \usepackage{tikz}
 \usepackage[english]{babel}
+\usetikzlibrary{snakes,arrows,shapes}
 
 \usepackage{textcomp}
 %\usepackage{bibgerm}

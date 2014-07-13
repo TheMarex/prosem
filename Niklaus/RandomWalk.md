@@ -25,6 +25,8 @@ We will show that for every graph that is $d-connected$, there exists such a seq
 A lot of research has be done by Aldous et. al on providing tighter lower bounds for the minium
 number of steps it takes to visit all nodes in graph, both for special graphs e.g. b-ary trees \citeNiklaus{aldous1991random} and
 general undirected graphs \citeNiklaus{feige1995tight}.
+Also are several attempts to get a upper bound on the space-complexity of $UPATH$ using only
+*determinstic* TMs, most recently Armoni et al \citeNiklaus{armoni2000log} gave a space bound of $O((\log n)^{\frac{4}{3}})$.
 
 ##### Applications
 Apart from the theoretical implications for complexity theory, RandomWalk and Universal Traversal Sequences
@@ -35,9 +37,10 @@ have well known applications in Artificial Intelligence for state space explorat
 ## Turing machine models
 
 For this paper we use the common formal definition of a *turing machine*,
-which we will extent to have 3 seperate tapes: A read-only reading tape, a work tape that can be read and written abitarially,
+which we will extent to have 3 seperate tapes: A read-only reading tape, a work tape that can be read and written,
 and a write-only output tape. We do this, to be able to ignore any reading operations done on the input, which is important to formalize
-sub-linear space bounds. We also require the reading head to stay only on the non-blank part of the input, to be sure we can not encode any additional information using the input tape.
+sub-linear space bounds. We also require the reading head of the input tape to stay only on the non-blank part of the input,
+which is important to get a bound for the configurations of such a turing machine.
 
 A *turing machine* is a tuple $M = \left( Q, \Gamma, b, \Sigma, q_0, F, \delta \right)$ with:
 
@@ -59,8 +62,9 @@ $q_0 \in Q$
 $F \subseteq Q$
   ~ Set of halting states.
 
-$\delta : \Gamma \times Q \longrightarrow \Gamma \times Q \times \{L, R, N\}^3$
-  ~ (partial) transition function
+$\delta : \Gamma^2 \times Q \longrightarrow \Gamma^2 \times Q \times \{L, R, N\}^3$
+  ~ (partial) transition function, note that this function can read and write two characters in each step,
+    because we can read from two tapes and write to two tapes.
 
 We will also use the notion of *turing machine acceptors*, which we can formalize
 by choosing a subset of the halting states as *accepting* states.
@@ -74,10 +78,19 @@ configurations, but rather a set of sequences. A determinstic TM accepts if it h
 To redefine this for a NTM, we say it accepts an input, if there *exists at least one* sequence of configurations
 that ends in an accepting state and the NTM halts.
 
-Furthermore we need to expand the notion of running time, which is defined for a determinstic TM
-as the number of configurations in an computation. For a non-determinstic TM we define the running time
-as the *maximum* number of configurations that lead to an accepting state, which is equivalent to the depth
-of the computation tree.
+## Time and space bounds
+
+Before we continue, it is important to estabilish the notion of *running time*
+and *space usage* since we will use it later to differenciate certain classes of problems.
+
+For a *deterministic* TM it is easy enough to define running time as the number of steps
+(i.e. the number of configurations) it takes before it halts.
+For a *non-determinstic* TM we need to expand this to the *maximum* number of configurations
+that lead to an accepting state, which is equivalent to the depth of the computation tree.
+
+Space usage in a 3 tape modell is defined as the number cells on the *working tape* that where visited by the
+reading head during the computation. As before, we use the maximum of all possible halting computations
+in the non-determinstic case.
 
 ## Decision problems and Complexity classes
 
@@ -108,6 +121,13 @@ NL
 
 Interestingly, simlar to the open question $P = NP$ it is also still undecied whether
 $L = NL$.
+
+To get a better understanding what you can do with a TM that has a logarithmic space bound, consider the following examples:
+
+FIXME
+
+Writing down all occurences of a symbol in the input
+  ~ Intuitively one would argue that this pronlems requires a TM that visits each character 
 
 ## $NL \subseteq P$
 
@@ -191,17 +211,22 @@ It is clear that $PATH \in NL$: Non-deterministically guess a path from
 $a$ to $b$. This can be done by non-deterministically generating a sequence of $n$
 nodes in the graph and checking to see if adjacent pairs in the sequence are
 adjacent in the graph and if both $a$ and $b$ occur in the sequence.
+
 Note: This works since each cycle-free path in a graph has at most $n$ nodes, so if there is one the NTM will find it.
+
 The only space needed on the working tape is the space to store a pair of nodes and a counter, which is all bounded by $\log n$.
+
 Now let $A \in NL$ via a $O(\log n)$ space-bounded machine M. As we saw in the proof of Theorem \ref{poly-running-time},
 this machine has at most polynomially many configurations on an input of length $n$.
 The desired reduction of $A$ to $PATH$ outputs for any x the
 graph in which each such configuration is a node, and the there is an edge
 from configuration $c_i$ to $c_j$ if $c_j$ is a configuration that could follow $c_i$ in the computation on
 input $x$. This can be done, for example, by producing for each configuration the finite list of possible successor configurations.
+
 Note: This can be computed by a TM that also has logarithmic space-bound, even if the output is linear in the input since,
 since we do not consider the output tape!
-By adding a single end node, for all accepting configurations, we can use $PATH$ to decide if there exists a path
+
+By adding a single end-node, for all accepting configurations, we can use $PATH$ to decide if there exists a path
 from the start configuration to the end-node. If so, we accept, otherwise we reject.
 \end{proof}
 
@@ -218,8 +243,8 @@ where G is an *undirected* graph.
 One might be tempted to adapt the previous proof of Theorem \ref{path-nl-complete} for NP-completeness of $PATH$
 to $UPATH$, but this will not work, since the given reduction will create invalid
 results for undirected graphs: It is often not possible to transition from $c_i$ to $c_j$,
-even if you can transition from $c_j$ to $c_i$. Thus there can be a lot of invalid computation
-paths in the undirected graph, which $UPATH$ would accept.
+even if you can transition from $c_j$ to $c_i$. Thus $UPATH$ would accept a lot of invalid computation
+paths in the undirected graph.
 
 This might already be a hint, that $UPATH$ is an easier problem than $PATH$, in fact we will see,
 that using randomization, we can solve $UPATH$ using no non-determinism at all.
@@ -233,44 +258,208 @@ $RL$ contains all the decision problems that can be decided by a TM that only ne
 logarithmic-bounded spaced for the computation, but is allowed to execute a *random*
 decision at each step *and only uses polynominal-bounded many steps*.
 
-Since we now have a *randomized* acceptor $M$, we need to redefine the notion of accepting
-once more:
+Since we now have a *randomized* acceptor $M$, we need to redefine the notion of accepting:
 
 $x \in A \Rightarrow Pr[M \text{ accepts } x] \geq \frac{1}{2}$
 
 $x \not \in A \Rightarrow Pr[M \text{ accepts } x] = 0$
 
-## randomized vs. non-determinstic
+Also, instead of running time and space usage, we use the *expected running time* and
+the *expected space usage*.
 
-One might wonder what the relation between $RL$ and $NL$ is. For this it is important not
+## Randomized vs. Non-Determinstic
+
+One might wonder what the relation between $RL$ and $NL$ is. It is important not
 to confuse the concepts of *random* (as used by $RL$) and *non-determinstic* (as used by NL).
 Non-determinism allows the TM to guess the *correct* transition in each step.
-A randomized TM can use a random value to determine the next transition, but for the same random value
-it will always act deterministically.
-Thus we see that every determinstic TM is a randomized TM that takes exactly zero random decisions
-and every randomized TM can be simulated by non-deterministic TM, by replacing random decisions with
-non-deterministic transisions to the corresponding states that could be chosen.
+A randomized TM can use a random value to determine the next transition, but for the *same random value*
+it will always act *deterministically*.
+Thus we see that every determinstic TM is a randomized TM that takes exactly zero random decisions.
+Furthermore every randomized TM can be simulated by non-deterministic TM, by replacing random decisions with
+non-deterministic transisions to the corresponding states that could be chosen based on the random value.
 
 To conclude we see that: $L \subseteq RL \subseteq NL$
 
 ## Proof that poly-running time bound is required
 
-- By counter example
+As you might have noticed, we required a poly-bound for running time of a TM in our definition
+of $RL$, which is something we could omit in the case of deterministic and non-deterministic TM.
+In this case however the requirement is non-optional. To understand why, we construct a randomized
+TM that has a log-space bound but has no polynomially bounded runtime.
+
+\begin{thm}
+\label{randomized-poly-runtime}
+There are randomized TM that have logarithmic space use, but an exponential running-time.
+\end{thm}
+
+\begin{proof}
+Let T be a randomized turing machine, that 'flips a coin' with probability $p = {\left(\frac{1}{2}\right)}^n$.
+The frist time it sees head it halts. It should be clear that this TM does not need to use any space on the working tape.
+
+To answer the question of the expected running time of such a TM, we model it as random experiment.
+$X$ denotes the number of coin flips before the first head. The probability that we saw $k$ tails before the first head is given by:
+
+$P(X = k) = (1-p)^k \cdot p$
+
+which follows the geometric probability density. That yields:
+
+$E(X) = \frac{1}{p} - 1 = 2^n - 1$
+
+So the expected runtime is in $O(2^n)$
+\end{proof}
 
 # Random Walk
 
-## The algorithms
+Using the previous definition for TM that can use randomization we can execute the following
+algorithm, which we will call *RandomWalk*.
 
-- definition
-- show that it can be computed using $\log n$ space
+## The algorithm
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\begin{algorithmic}
+\Require $(G, a, b)$
+\State $v \gets a$
+\For{$i \gets 1 \text{ to } p(n)$}
+	\State Randomly select a node $w$ that is adjacent to $v$
+	\State $v \gets w$
+	\If{$v = b$}
+		\State {\bf accept.}
+	\EndIf
+\EndFor
+\State {\bf reject.}
+\end{algorithmic}
+
+It should be clear, that this can be executes by a randomized TM $M$. But to show that $UPATH \in RL$
+we still need to proof the following requirements:
+
+1. $M$ can compute *RandomWalk* using only logarithmically bounded space.
+
+2. We can find a polynominal $p(n)$, for which $M$ satisfies:
+
+	$(G, a, b) \in UPATH \Rightarrow Pr[M \text{ accepts } (G, a, b)] \geq \frac{1}{2}$
+
+	$(G, a, b) \not \in UPATH \Rightarrow Pr[M \text{ accepts } (G, a, b)] = 0$
+
+The first requirement is easy to proof, since we can see from the algorithm,
+that the only state that needs to be stored on the working tape is $v$. Since
+we can encode $v$ using its node number, we need only $O(\log n)$ bits for that.
+
+Proofing the second requirement however, will compromise the most of the remainder of this chapter.
 
 ## Application on PATH
 
-- Show why this algorithm does not work for deciding PATH
+At first sight, the above algorithm could also work for directed graphs, if one would
+define what happens in case *RandomWalk* reaches a node that has no outgoing edge. (e.g. simply restart at $a$)
+However we can show that there are directed graphs, for which doing only poly-bounded many steps
+will lead to incorrect results.
+
+\begin{thm}
+\label{path-randomized-exponential}
+There are directed graphs for which {\em RandomWalk} does not decide $(G, a, b) \in PATH$ correctly
+(as defined for randomized TMs) using only polynomially-bounded many steps.
+\end{thm}
+
+\begin{proof}
+Since we want to be independent of defining what happens when {\em RandomWalk} reaches a dead-end,
+we simiply provide a graph, where every node has an outgoing edge.
+
+We construct a graph where for each node $v_i$ there is an edge $(v_i, v_{i+1})$ and $(v_i, v_1)$ for $n \in \{ 1, \dots, n \}$.
+We can see that $|E| = 2n$ and $|V| = n$, so the size of our input graph is in $O(n)$. We set $a = v_1$ and $b = v_n$.
+
+See figure \ref{graph-randomized} for an example with $n=4$.
+
+At each node RandomWalk selects with $p = \frac{1}{2}$ the correct node. So the probability for finding the path
+from $a$ to $b$ is $p = \left(\frac{1}{2}\right)^n$. Since each new try starting at $a$ is independent from the previous
+one, this can be modelled as simple coin-flipping experiment using $p$ as propability for success.
+As we saw in the proof of theorem \ref{randomized-poly-runtime}, the expected number of retries will be $2^n$.
+
+Since the loop of the RandomWalk algorithm will do at least one iteration until
+we reach $a$ again, the expected length of the random walk is at least $2^n$.
+Thus RandomWalk can not decide instances of this class correctly using a polynominally-bounded many steps.
+\end{proof}
+
+\begin{figure}
+\begin{tikzpicture}[line join=bevel]
+  \tikzstyle{vertex}=[circle,fill=black!25,minimum size=12pt,inner sep=2pt]
+  \node[vertex] (G_1) at (-2,0) {$v_1$};
+  \node[vertex] (G_2) at (0,0)  {$v_2$};
+  \node[vertex] (G_3) at (2,0)   {$v_3$};
+  \node[vertex] (G_4) at (4,0)   {$v_4$};
+  \draw [->] (G_1) -- (G_2);
+  \draw [->] (G_2) -- (G_3);
+  \draw [->] (G_3) -- (G_4);
+  \draw [->] (G_1) .. controls (-3.0, 0.5) and (-3.0, -0.5).. (G_1);
+  \draw [->] (G_2) .. controls (-1.0, -0.5) .. (G_1);
+  \draw [->] (G_3) .. controls (0.0, -0.75) .. (G_1);
+  \draw [->] (G_4) .. controls (2.0, -1.0) .. (G_1);
+\end{tikzpicture}
+\caption{The graph used in proof of Theorem \ref{path-randomized-exponential} for $n=4$}
+\label{graph-randomized}
+\end{figure}
 
 ## Correctness for UPATH
 
-Show that RandomWalk satisfies the properties of a decider for UPATH in RL:
+To show that our decider for UPATH based on RandomWalk really only neeeds to do poly-bounded many steps,
+we are going to abstract from the concrete algorithm and define a *random walk on a graph*.
+
+A *random walk on a graph $G$ starting at $a$* is a *infinite* sequence of nodes $W = (v_1, v_2, \dots)$
+where each $v_{i+1}$ was choosen randomly under uniform distribution from the neighbour nodes of $v_i$. (so $\{v_i, v_{i+1}\}$ is an egde in $G$)
+
+We are now interested in the probability that a node $v$ occurs in this sequence.
+
+To do this, we are going to model the *random walk on G* as a *Markov Chain*.
+We define the random variable $X_i$ as the node in $G$ that is reached at the $i$-th step of our random walk.
+We can see that, $X_i$ only depends on the value of $X_{i-1}$, the previous node, so we know that:
+
+$$ Pr[X_i = v | X_{i-1} = u] = \left\{
+  \begin{array}{l l}
+    \frac{1}{d(u)} & \quad \text{if $v$ is adjacent to $u$}\\
+    0 & \quad \text{otherwise}
+  \end{array} \right.
+$$
+
+Thus the sequence of random variables $X_1, X_2, X_3, ...$ has the *Markov Property*.
+
+Furthermore we see that $Pr[X_i = v | X_{i-1} = u]$ only depends on $u$ and $v$ and not on $i$ from which we can conclude that this is a *stationary* markov chain.
+
+This means it is rather easy to transform a graph into the state diagram of a markov chain
+that models a random walk on this gaph: We replace the undirected edges $\{u, v\}$ by directed edges
+$(u, v)$ and $(v, u)$ and label them with the correct transition probabilities, $\frac{1}{d(u)}$ and $\frac{1}{d(v)}$ respectively.
+For an example see figure \ref{graph-markov}.
+
+Since each input graph is of finite size, we can define the state-transition matrix $P \in \mathbb{R}^{n \times n}$
+
+\begin{figure}
+\begin{tikzpicture}[line join=bevel]
+  \tikzstyle{vertex}=[circle,fill=black!25,minimum size=12pt,inner sep=2pt]
+  \node[vertex] (G_1) at (-2,0)  {$v_1$};
+  \node[vertex] (G_2) at (0,0)   {$v_2$};
+  \node[vertex] (G_3) at (2,0)   {$v_3$};
+  \node[vertex] (G_4) at (2,3)   {$v_4$};
+  \draw (G_1) -- (G_2);
+  \draw (G_2) -- (G_3);
+  \draw (G_2) -- (G_4);
+  \draw (G_3) -- (G_4);
+\end{tikzpicture}
+\begin{tikzpicture}[->,line join=bevel]
+  \tikzstyle{vertex}=[circle,fill=black!25,minimum size=12pt,inner sep=2pt]
+  \node[vertex] (G_1) at (-2,0)  {$v_1$};
+  \node[vertex] (G_2) at (0,0)   {$v_2$};
+  \node[vertex] (G_3) at (2,0)   {$v_3$};
+  \node[vertex] (G_4) at (2,3)   {$v_4$};
+  \path (G_1) edge [bend left] node[above] {1} (G_2)
+        (G_2) edge node[below] {$\frac{1}{3}$} (G_1)
+        (G_2) edge node[above] {$\frac{1}{3}$} (G_3)
+        (G_3) edge [bend left] node[below] {$\frac{1}{2}$} (G_2)
+        (G_2) edge [bend left] node[left] {$\frac{1}{3}$} (G_4)
+        (G_4) edge node[right] {$\frac{1}{2}$} (G_2)
+        (G_3) edge node[left] {$\frac{1}{2}$} (G_4)
+        (G_4) edge [bend left] node[right] {$\frac{1}{2}$} (G_3);
+\end{tikzpicture}
+\caption{The original graph on the left, the state graph on the right.}
+\label{graph-markov}
+\end{figure}
 
 1. Show that $P_v = \lim{n \longrightarrow \infty} \frac{|\{i \leq n | v = v_i\}|}{n}$
 	- Proof that $P_{(u, v)} = \frac{1}{2 \cdot e}$
