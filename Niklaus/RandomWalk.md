@@ -1,6 +1,6 @@
 
 In this paper I will present the collected findings of Aleliunas et. al. \citeNiklaus{aleliunas1979random} on the
-space complexity of deciding whether there exsists a path between two nodes
+space complexity of deciding whether there exists a path between two nodes
 $a$, $b$ in graphs.
 
 Interestingly the complexity of this decision problem is different for directed and undirected graphs.
@@ -9,24 +9,24 @@ $L$ and $NL$.
 
 In the case of an undirected graph, we can employ an algorithm called *random walk*
 which does just that. Unlike common path finding algorithms like the famous Dijekstra algorithm,
-this algorithm only needs a logarithmic amount of storage to compute, and is inherently simplistic in its decription:
-Instead of chosing the next neighbour node to explore based on certain criteria,
+this algorithm only needs a logarithmic amount of storage to compute, and is inherently simplistic in its description:
+Instead of choosing the next neighbor node to explore based on certain criteria,
 we just pick one at random and check if we reached our destination.
-It is not intuetively clear that this algorithm can decide whether there is a path between $a$ and $b$
-correctly. Infact it can only do so with a certain probability, it is an *randomized* algorithm.
-However, by chosing a sufficent number of steps we can make sure it decides correctly with a probability
+It is not intuitively clear that this algorithm can decide whether there is a path between $a$ and $b$
+correctly. In fact it can only do so with a certain probability, it is an *randomized* algorithm.
+However, by choosing a sufficient number of steps we can make sure it decides correctly with a probability
 higher than $\frac{1}{2}$, which we can still increase by just running the algorithm multiple times.
 
 Furthermore this is deeply related to finding "routing directions", that visit all
 nodes in a graph and work in all graphs with a certain size, so called *universal traversal sequences*.
-We will show that for every graph that is $d-connected$, there exists such a sequences and its length is only polynominal in the number of nodes.
+We will show that for every graph that is $d-connected$, there exists such a sequences and its length is only polynomial in the number of nodes.
 
 ##### Further Research
-A lot of research has be done by Aldous et. al on providing tighter lower bounds for the minium
+A lot of research has be done by Aldous et. al on providing tighter lower bounds for the minimum
 number of steps it takes to visit all nodes in graph, both for special graphs e.g. b-ary trees \citeNiklaus{aldous1991random} and
 general undirected graphs \citeNiklaus{feige1995tight}.
 Also are several attempts to get a upper bound on the space-complexity of $UPATH$ using only
-*determinstic* TMs, most recently Armoni et al \citeNiklaus{armoni2000log} gave a space bound of $O((\log n)^{\frac{4}{3}})$.
+*deterministic* TMs, most recently Armoni et al \citeNiklaus{armoni2000log} gave a space bound of $O((\log n)^{\frac{4}{3}})$.
 
 ##### Applications
 Apart from the theoretical implications for complexity theory, RandomWalk and Universal Traversal Sequences
@@ -37,7 +37,7 @@ have well known applications in Artificial Intelligence for state space explorat
 ## Turing machine models
 
 For this paper we use the common formal definition of a *turing machine*,
-which we will extent to have 3 seperate tapes: A read-only reading tape, a work tape that can be read and written,
+which we will extent to have 3 separate tapes: A read-only reading tape, a work tape that can be read and written,
 and a write-only output tape. We do this, to be able to ignore any reading operations done on the input, which is important to formalize
 sub-linear space bounds. We also require the reading head of the input tape to stay only on the non-blank part of the input,
 which is important to get a bound for the configurations of such a turing machine.
@@ -69,28 +69,28 @@ $\delta : \Gamma^2 \times Q \longrightarrow \Gamma^2 \times Q \times \{L, R, N\}
 We will also use the notion of *turing machine acceptors*, which we can formalize
 by choosing a subset of the halting states as *accepting* states.
 
-As you might have noticed, this TM definition is that of a determinstic TM. For non-determinstic
+As you might have noticed, this TM definition is that of a deterministic TM. For non-deterministic
 TM we simply remove the restriction that $\delta$ is a (partial) function. Instead $\delta$ is a general
 relation, which for example implies that there can be more than one next configuration.
 
-This results in the property that a computation of a non-determinstic TM is not a single sequence of
-configurations, but rather a set of sequences. A determinstic TM accepts if it halts in an accepting state.
+This results in the property that a computation of a non-deterministic TM is not a single sequence of
+configurations, but rather a set of sequences. A deterministic TM accepts if it halts in an accepting state.
 To redefine this for a NTM, we say it accepts an input, if there *exists at least one* sequence of configurations
 that ends in an accepting state and the NTM halts.
 
 ## Time and space bounds
 
-Before we continue, it is important to estabilish the notion of *running time*
-and *space usage* since we will use it later to differenciate certain classes of problems.
+Before we continue, it is important to establish the notion of *running time*
+and *space usage* since we will use it later to differentiate certain classes of problems.
 
 For a *deterministic* TM it is easy enough to define running time as the number of steps
 (i.e. the number of configurations) it takes before it halts.
-For a *non-determinstic* TM we need to expand this to the *maximum* number of configurations
+For a *non-deterministic* TM we need to expand this to the *maximum* number of configurations
 that lead to an accepting state, which is equivalent to the depth of the computation tree.
 
-Space usage in a 3 tape modell is defined as the number cells on the *working tape* that where visited by the
+Space usage in a 3 tape model is defined as the number cells on the *working tape* that where visited by the
 reading head during the computation. As before, we use the maximum of all possible halting computations
-in the non-determinstic case.
+in the non-deterministic case.
 
 ## Decision problems and Complexity classes
 
@@ -105,27 +105,27 @@ we can use this to classify decision problems based on running time and space us
 In general we say, a language $L$ is in a complexity class $A$ if and only if
 the corresponding decision problem satisfies a certain constraint.
 For this paper, we are mainly interested in four complexity classes
-(note when we say *polynominally-bounded* we mean: bounded by a polynominal in the input length $n$):
+(note when we say *polynomially-bounded* we mean: bounded by a polynomial in the input length $n$):
 
 P
-  ~ All decision problems that can be solved by a *deterministic* turing machine using only polynominally-bounded many steps.
+  ~ All decision problems that can be solved by a *deterministic* turing machine using only polynomially-bounded many steps.
 
 NP
-  ~ All decision problems that can be solved by a *non-deterministic* turing machine using only polynominally-bounded many steps.
+  ~ All decision problems that can be solved by a *non-deterministic* turing machine using only polynomially-bounded many steps.
 
 L
-  ~ All decision problems that can be solved by a *determinstic* turing machine using only log-bounded space for the compuation.
+  ~ All decision problems that can be solved by a *deterministic* turing machine using only log-bounded space for the compuation.
 
 NL
-  ~ All decision problems that can be solved by a *non-determinstic* turing machine using only log-bounded space for the compuation.
+  ~ All decision problems that can be solved by a *non-deterministic* turing machine using only log-bounded space for the compuation.
 
-Interestingly, simlar to the open question $P = NP$ it is also still undecied whether
+Interestingly, similar to the open question $P = NP$ it is also still undecided whether
 $L = NL$.
 
 To get a better understanding what you can do with a TM that has a logarithmic space bound, consider the following example:
 
-Writing down all occurences of a symbol in the input
-  ~ Intuitively one would argue that this problem requires a TM that visits each character at least once, thus this problem has a space complexity $\Omega (n)$. But since we only cound head movements on our *working tape*, the actualy space requirement is the space we need for noting how often the symbol has occured so far, which is in $O(\log n)$.
+Writing down all occurrences of a symbol in the input
+  ~ Intuitively one would argue that this problem requires a TM that visits each character at least once, thus this problem has a space complexity $\Omega (n)$. But since we only count head movements on our *working tape*, the actual space requirement is the space we need for noting how often the symbol has occurred so far, which is in $O(\log n)$.
 
 ## $NL \subseteq P$
 
@@ -147,34 +147,34 @@ can be bounded by $O(\log n)$ as well (for the input tape it is always bounded b
 
 $n^{O(n)} \cdot n \cdot O(\log n)) \cdot |Q| \subset O(n^k)$ for a suitably chosen $k \in \mathbb{N}$.
 
-Now we need to see that this results in a poly bounded running time for a NTM.
+Now we need to see that this results in a poly-bounded running time for a NTM.
 Since we have an upper bound to the number of configurations, any cycle-free sequence of configuration that leads to a halting state
 is shorter than our bound. So a NTM only needs to iterate all configurations until a halting configuration is found, or
 the length of the sequence is longer than our bound.
-This can be done in polynominal running thus, $NL \subseteq P$.
+This can be done in polynomial running thus, $NL \subseteq P$.
 
 \end{proof}
 
-This proof is given for deterministic TM, since every non-deterministic TM can be transformted to an equivalent determinstic TM (with exponentially more states, but note that is still constant with regard to the input size).
+This proof is given for deterministic TM, since every non-deterministic TM can be transformed to an equivalent deterministic TM (with exponentially more states, but note that is still constant with regard to the input size).
 
-## Reducibilty and NL-completeness
+## Reducibility and NL-completeness
 
 In the case of $P = NP$ it has been proven valuable to search for certain "hard"
-problems that characterize the complexity class. Similary to the notion of *NP-Completeness*,
+problems that characterize the complexity class. Similarly to the notion of *NP-Completeness*,
 that is certain problems that are at least as difficult as any other decision problem in that complexity class,
 we try to define *NL-Completeness*.
 
 A common technique to show that a decision problem is NP-complete,
-is to use reductions, for example the *Polynominal-Time Many-One Reduction*. A decision problem $A$ is said to be *poly-time many-one reducible*
-to a decision problem $B$ if and only if there exists a function $f$ that can be computed in poly-time, for which the follwing requirement holds:
+is to use reductions, for example the *Polynomial-Time Many-One Reduction*. A decision problem $A$ is said to be *poly-time many-one reducible*
+to a decision problem $B$ if and only if there exists a function $f$ that can be computed in poly-time, for which the following requirement holds:
 
 $w \in A \Leftrightarrow f(w) \in B$
 
 Naively applying the same technique here will not work, since the poly-time constraint on the function is much too loose. Since the transforming function has no log-space constraint, it could be used to solve all decision problems in $NL$ thus yielding a trivial reduction.
 
-So, for NL-Completeness we need to add a space constraint on the transformtion function:
+So, for NL-Completeness we need to add a space constraint on the transformation function:
 A decision problem $A$ is said to be *log reducible* to $B$ ($A \leq_{log} B$) if and only if there exists a function
-$f$ that can be computed using logarithmic-bounded space (and thus is also poly-time canstraint as we saw in the previous section)
+$f$ that can be computed using logarithmic-bounded space (and thus is also poly-time constraint as we saw in the previous section)
 and satisfies the following requirement:
 
 $w \in A \Leftrightarrow f(w) \in B$
@@ -231,7 +231,7 @@ from the start configuration to the end-node. If so, we accept, otherwise we rej
 
 Similar to $PATH$ we define $UPATH$ as:
 
-$(G, a, b) \in PATH \Leftrightarrow $ there exsits a path from $a$ to $b$ in $G$.
+$(G, a, b) \in PATH \Leftrightarrow $ there exists a path from $a$ to $b$ in $G$.
 
 where G is an *undirected* graph.
 
@@ -248,12 +248,12 @@ that using randomization, we can solve $UPATH$ using no non-determinism at all.
 
 # RL
 
-To differenciate $PATH$ and $UPATH$ even more, we will introduce yet another
+To differentiate $PATH$ and $UPATH$ even more, we will introduce yet another
 complexity class called $RL$.
 
 $RL$ contains all the decision problems that can be decided by a TM that only needs
 logarithmic-bounded spaced for the computation, but is allowed to execute a *random*
-decision at each step *and only uses polynominal-bounded many steps*.
+decision at each step *and only uses polynomial-bounded many steps*.
 
 Since we now have a *randomized* acceptor $M$, we need to redefine the notion of accepting:
 
@@ -264,16 +264,16 @@ $x \not \in A \Rightarrow Pr[M \text{ accepts } x] = 0$
 Also, instead of running time and space usage, we use the *expected running time* and
 the *expected space usage*.
 
-## Randomized vs. Non-Determinstic
+## Randomized vs. Non-deterministic
 
 One might wonder what the relation between $RL$ and $NL$ is. It is important not
-to confuse the concepts of *random* (as used by $RL$) and *non-determinstic* (as used by NL).
+to confuse the concepts of *random* (as used by $RL$) and *non-deterministic* (as used by NL).
 Non-determinism allows the TM to guess the *correct* transition in each step.
 A randomized TM can use a random value to determine the next transition, but for the *same random value*
 it will always act *deterministically*.
-Thus we see that every determinstic TM is a randomized TM that takes exactly zero random decisions.
+Thus we see that every deterministic TM is a randomized TM that takes exactly zero random decisions.
 Furthermore every randomized TM can be simulated by non-deterministic TM, by replacing random decisions with
-non-deterministic transisions to the corresponding states that could be chosen based on the random value.
+non-deterministic transistions to the corresponding states that could be chosen based on the random value.
 
 To conclude we see that: $L \subseteq RL \subseteq NL$
 
@@ -291,7 +291,7 @@ There are randomized TM that have logarithmic space use, but an exponential runn
 
 \begin{proof}
 Let T be a randomized turing machine, that 'flips a coin' with probability $p = {\left(\frac{1}{2}\right)}^n$.
-The frist time it sees head it halts. It should be clear that this TM does not need to use any space on the working tape.
+The first time it sees head it halts. It should be clear that this TM does not need to use any space on the working tape.
 
 To answer the question of the expected running time of such a TM, we model it as random experiment.
 $X$ denotes the number of coin flips before the first head. The probability that we saw $k$ tails before the first head is given by:
@@ -332,7 +332,7 @@ we still need to proof the following requirements:
 
 1. $M$ can compute *RandomWalk* using only logarithmically bounded space.
 
-2. We can find a polynominal $p(n)$, for which $M$ satisfies:
+2. We can find a polynomial $p(n)$, for which $M$ satisfies:
 
 	$(G, a, b) \in UPATH \Rightarrow Pr[M \text{ accepts } (G, a, b)] \geq \frac{1}{2}$
 
@@ -359,7 +359,7 @@ There are directed graphs for which {\em RandomWalk} does not decide $(G, a, b) 
 
 \begin{proof}
 Since we want to be independent of defining what happens when {\em RandomWalk} reaches a dead-end,
-we simiply provide a graph, where every node has an outgoing edge.
+we simply provide a graph, where every node has an outgoing edge.
 
 We construct a graph where for each node $v_i$ there is an edge $(v_i, v_{i+1})$ and $(v_i, v_1)$ for $n \in \{ 1, \dots, n \}$.
 We can see that $|E| = 2n$ and $|V| = n$, so the size of our input graph is in $O(n)$. We set $a = v_1$ and $b = v_n$.
@@ -368,12 +368,12 @@ See figure \ref{graph-randomized} for an example with $n=4$.
 
 At each node RandomWalk selects with $p = \frac{1}{2}$ the correct node. So the probability for finding the path
 from $a$ to $b$ is $p = \left(\frac{1}{2}\right)^n$. Since each new try starting at $a$ is independent from the previous
-one, this can be modelled as simple coin-flipping experiment using $p$ as propability for success.
+one, this can be modeled as simple coin-flipping experiment using $p$ as propability for success.
 As we saw in the proof of theorem \ref{randomized-poly-runtime}, the expected number of retries will be $2^n$.
 
 Since the loop of the RandomWalk algorithm will do at least one iteration until
 we reach $a$ again, the expected length of the random walk is at least $2^n$.
-Thus RandomWalk can not decide instances of this class correctly using a polynominally-bounded many steps.
+Thus RandomWalk can not decide instances of this class correctly using a polynomially-bounded many steps.
 \end{proof}
 
 \begin{figure}
@@ -397,11 +397,11 @@ Thus RandomWalk can not decide instances of this class correctly using a polynom
 
 ## Correctness for UPATH
 
-To show that our decider for UPATH based on RandomWalk really only neeeds to do poly-bounded many steps,
+To show that our decider for UPATH based on RandomWalk really only needs to do poly-bounded many steps,
 we are going to abstract from the concrete algorithm and define a *random walk on a graph*.
 
 A *random walk on a graph $G$ starting at $a$* is a *infinite* sequence of nodes $W = (v_1, v_2, \dots)$
-where each $v_{i+1}$ was choosen randomly under uniform distribution from the neighbour nodes of $v_i$. (so $\{v_i, v_{i+1}\}$ is an egde in $G$)
+where each $v_{i+1}$ was choosen randomly under uniform distribution from the neighbor nodes of $v_i$. (so $\{v_i, v_{i+1}\}$ is an egde in $G$)
 
 We are now interested in the probability $P_v$ that a node $v$ occurs in this sequence. It should be clear that $P_v = 0$, if $v_1$ and $v$ are not part of the same connected component. It is handy for the following chapter to assume that we have a connected graph.
 
@@ -460,7 +460,7 @@ For an example see figure \ref{graph-markov}.
 
 Since each input graph is of finite size, we can define the state-transition matrix $P \in \mathbb{R}^{n \times n}$.
 
-We now whant to show the *unique* existence of a so called *stationary distribution*,
+We now want to show the *unique* existence of a so called *stationary distribution*,
 that is a distribution $\pi$ for which:
 
 $\pi \cdot P = \pi$
@@ -473,7 +473,7 @@ irreducibility
 Or more precise:
 $\exists i \in \mathbb{N}: Pr[X_i = v | X_0 = u] > 0$ for all $u, v \in V$
 
-This simply follows from the obversation that we can derive the state-graph from the *undirected connected* input graph.
+This simply follows from the observation that we can derive the state-graph from the *undirected connected* input graph.
 Thus for each pair of states $(u, v)$ there is a path from $u$ to $v$, which will have probability $> 0$.
 
 \vspace{0.5cm}\begin{thm}
@@ -530,7 +530,7 @@ $$
 
 We can now use this stationary distribution to actually answer the question of a concrete value of $P_v$.
 
-First we need to consider that the value of $P_v$ is highly depended on how we choose the *start node*. We model chosing the start node as supplying an *initial distribution* to our markov chain.
+First we need to consider that the value of $P_v$ is highly depended on how we choose the *start node*. We model choosing the start node as supplying an *initial distribution* to our markov chain.
 
 Consider figure \ref{cyclic-graph}, which has
 $P = \left(\begin{matrix}0 & 1\\ 1 & 0\end{matrix}\right)$.
@@ -551,10 +551,12 @@ However if we assume we start at each node uniformly distributed with probabilit
 \label{cyclic-graph}
 \end{figure}
 
-It can be shown that this initial distribution will always lead to a convergence on our stationary distribition (follows from the Ergodic Theorem).
-To get an idea why this works, we can think of starting with an uniform initial distribution as conducting all possible random walks starting at all nodes at the same time. The probailities we compute are the probilites to be in state $i$ over *all* random walks.
+It can be shown that this initial distribution will always lead to a convergence on our stationary distribution (follows from the Ergodic Theorem).
+To get an idea why this works, we can think of starting with an uniform initial distribution
+as conducting all possible random walks starting at all nodes at the same time.
+The probabilities we compute are the probabilities to be in state $i$ over *all* random walks.
 
-Now, finally we can see that $P_v = \pi(v)$ if we assume we start uniformly distributed. The expected number of steps beween occurences of a state in a markov chain is $\frac{1}{\pi(v)} = \frac{2e}{d(v)} =: E(v, v)$.
+Now, finally we can see that $P_v = \pi(v)$ if we assume we start uniformly distributed. The expected number of steps between occurrences of a state in a markov chain is $\frac{1}{\pi(v)} = \frac{2e}{d(v)} =: E(v, v)$.
 
 ### Computing a bound on the length of a random walk
 
@@ -578,7 +580,7 @@ Using this we can proof an upper bound for $E(i, G)$, that is the expected numbe
 starting at v to visit *all* nodes. We can use this as upper bound for $E(i, j)$ (of course this bound is not exactly tight, but suffices).
 
 First we should not that in an undirected connected graph, there is always a path $(v_0, v_1, \dots, v_k)$ of length less than $2n$ that reaches all nodes.
-We are not going to state the proof for that here, but you can find it in \citeNiklaus{DBLP:books/daglib/0094933} Solution to Excerise 5.10.
+We are not going to state the proof for that here, but you can find it in \citeNiklaus{DBLP:books/daglib/0094933} Solution to Exercise 5.10.
 
 From that we can see that:
 
@@ -588,7 +590,7 @@ $E(a, b) \leq E(a, G) \leq \sum_{i=1}^{k} E(v_{i-1}, v_i) \leq 2n \cdot 2e = 4en
 
 We are now going to proof that using $8en$ as an upper bound for the steps of our random walk starting at $a$
 we are *not* going to visit $b$ with probability less than $\frac{1}{2}$ thus our decider will decide correctly
-with propability $\geq \frac{1}{2}$, which again means that our decider is a valid randomized decider.
+with probability $\geq \frac{1}{2}$, which again means that our decider is a valid randomized decider.
 
 Let $T(a, b)$ denote the random variable that models the number of steps a random walk from $a$ to $b$ takes.
 The probability that our random walk starting at $a$ does not reach $b$ using $8en$ steps, equals the probability that we need to take more than $8en$
@@ -617,7 +619,7 @@ Using the theory of markov chains we can prove that we only need
 poly-bounded many steps $8en$ to find a path from $a$ to $b$ with probability higher than $\frac{1}{2}$.
 
 Actually we saw (thanks to our rather generous upper bound) that using $8en$ steps,
-the probabilty that we *do not* reach all nodes in $G$ is less than $\frac{1}{2}$.
+the probability that we *do not* reach all nodes in $G$ is less than $\frac{1}{2}$.
 This insight is important for the next chapter on *Universal Traversal Sequences*.
 
 # Universal Traversal Sequence
@@ -626,17 +628,17 @@ In this chapter we will step back from the decision problems $UPATH$ and $PATH$
 and will discuss an interesting "by product" of our correctness proof in the previous chapter.
 
 We saw that using a random walk with $8en$ steps we will traverse all nodes in a graph
-with probabilty higher than $\frac{1}{2}$. If we carry out $m$ random walks we can decrease
+with probability higher than $\frac{1}{2}$. If we carry out $m$ random walks we can decrease
 the probability that we do not reach all nodes:
 Let $R_i$ denote the event that we do not reach all nodes using a random walk on $G$, then we see that:
 
 $Pr[R_1, \dots, R_m] = Pr[R_1] \cdot .. \cdot Pr[R_m] < 2^{-m}$
 
 So our error decreases *exponentially*. However the number of steps $m \cdot 8en$ is still polynominal.
-We call this effect *probabilty amplification*.
+We call this effect *probability amplification*.
 
-We can use this effect to prove that ther must be a squence of directions that carries out a random
-walk on all d-regular graphs of the same size and visits all nodes (with probabilty 1.0).
+We can use this effect to prove that there must be a sequence of directions that carries out a random
+walk on all d-regular graphs of the same size and visits all nodes (with probability 1.0).
 
 ## Definition
 
@@ -650,12 +652,11 @@ We define a *traversal sequence* on such a graph as a sequence $I = (i_1, ..., i
 If each node numbers its adjacent edges from $0$ to $d-1$ this sequence is essentially a routing instruction for that graph.
 Note this sequences are valid on *all* d-regular graphs, but most likely do not describe the same route.
 
-
 ## Finding the universal traversal sequence
 
 It is easy to see that in such a graph $|E| = e \leq \frac{d \cdot n}{2}$.
 
-Since there is only a finite amout amount of d-regular graphs of a certain size, let us denote $g_{n,d}$ as the number of
+Since there is only a finite amount of d-regular graphs of a certain size, let us denote $g_{n,d}$ as the number of
 all d-regular graphs with $n$ nodes.
 
 \vspace{0.5cm}\begin{thm}
@@ -677,11 +678,11 @@ we see that this sequence carries out a random walk of length $k$ on each $d-reg
 As we saw before a random walk with $k = m \cdot 8en \leq 4dn$ has a probability of less than $2^{-m}$ to *not* visit all nodes.
 
 Thus number of d-regular graphs that a given traversal sequence will not traverse completely is $g_{n, d} \cdot 2^{-m}$.
-If we make $m$ sufficiently large, such that $g_{n, d} \cdot 2^{-m} < 1$ there is a positive propability that a traversal sequence
+If we make $m$ sufficiently large, such that $g_{n, d} \cdot 2^{-m} < 1$ there is a positive probability that a traversal sequence
 will traverse all nodes in all graphs. We call this sequence *Universal Traversal Sequence*.
 
 \vspace{0.5cm}\begin{thm}
-There always exsits a Universal Traversal Sequence and it has polynominally bounded length.
+There always exists a *Universal Traversal Sequence* and it has polynomially bounded length.
 \end{thm}
 
 \begin{proof}
@@ -699,7 +700,7 @@ $$
 
 So there exists a traversal sequence with $k \geq 4dn \cdot \log n \cdot n d \geq g_{n, d} \cdot m$ that visits all nodes in all d-regular graphs of size n.
 
-We see that $k \in O(n^3 \log n)$ (since $d \leq n$) thus the length is indeed bounded by a polynominal.
+We see that $k \in O(n^3 \log n)$ (since $d \leq n$) thus the length is indeed bounded by a polynomial.
 
 \end{proof}
 
