@@ -122,20 +122,17 @@ NL
 Interestingly, simlar to the open question $P = NP$ it is also still undecied whether
 $L = NL$.
 
-To get a better understanding what you can do with a TM that has a logarithmic space bound, consider the following examples:
-
-FIXME
+To get a better understanding what you can do with a TM that has a logarithmic space bound, consider the following example:
 
 Writing down all occurences of a symbol in the input
-  ~ Intuitively one would argue that this pronlems requires a TM that visits each character 
+  ~ Intuitively one would argue that this problem requires a TM that visits each character at least once, thus this problem has a space complexity $\Omega (n)$. But since we only cound head movements on our *working tape*, the actualy space requirement is the space we need for noting how often the symbol has occured so far, which is in $O(\log n)$.
 
 ## $NL \subseteq P$
 
 In this section we want to assert where NL is placed in the complexity hierarchy.
 It should be clear that $L \subseteq NL$ and $P \subseteq NP$, so we are mainly interested in placing $NL$ in that hierarchy.
 As it turns out, we can show that $NL \subseteq P$. Actually we can show much more:
-
-\begin{thm}
+\vspace{0.5cm}\begin{thm}
 \label{poly-running-time}
 Every turing machine that only needs logarithmic-bounded space for its computation and halts, also has a poly-bounded running time.
 \end{thm}
@@ -199,7 +196,7 @@ $(G, a, b) \in PATH \Leftrightarrow $ there exsits a path from $a$ to $b$ in $G$
 
 ### NL-completeness
 
-\begin{thm}
+\vspace{0.5cm}\begin{thm}
 \label{path-nl-complete}
 PATH is NL-complete.
 \end{thm}
@@ -287,7 +284,7 @@ of $RL$, which is something we could omit in the case of deterministic and non-d
 In this case however the requirement is non-optional. To understand why, we construct a randomized
 TM that has a log-space bound but has no polynomially bounded runtime.
 
-\begin{thm}
+\vspace{0.5cm}\begin{thm}
 \label{randomized-poly-runtime}
 There are randomized TM that have logarithmic space use, but an exponential running-time.
 \end{thm}
@@ -354,7 +351,7 @@ define what happens in case *RandomWalk* reaches a node that has no outgoing edg
 However we can show that there are directed graphs, for which doing only poly-bounded many steps
 will lead to incorrect results.
 
-\begin{thm}
+\vspace{0.5cm}\begin{thm}
 \label{path-randomized-exponential}
 There are directed graphs for which {\em RandomWalk} does not decide $(G, a, b) \in PATH$ correctly
 (as defined for randomized TMs) using only polynomially-bounded many steps.
@@ -406,9 +403,11 @@ we are going to abstract from the concrete algorithm and define a *random walk o
 A *random walk on a graph $G$ starting at $a$* is a *infinite* sequence of nodes $W = (v_1, v_2, \dots)$
 where each $v_{i+1}$ was choosen randomly under uniform distribution from the neighbour nodes of $v_i$. (so $\{v_i, v_{i+1}\}$ is an egde in $G$)
 
-We are now interested in the probability that a node $v$ occurs in this sequence.
+We are now interested in the probability $P_v$ that a node $v$ occurs in this sequence. It should be clear that $P_v = 0$, if $v_1$ and $v$ are not part of the same connected component. It is handy for the following chapter to assume that we have a connected graph.
 
-To do this, we are going to model the *random walk on G* as a *Markov Chain*.
+### Modeling as Markov Chain
+
+To compute the value for $P_v$, we are going to model the *random walk on G* as a *Markov Chain*.
 We define the random variable $X_i$ as the node in $G$ that is reached at the $i$-th step of our random walk.
 We can see that, $X_i$ only depends on the value of $X_{i-1}$, the previous node, so we know that:
 
@@ -421,14 +420,12 @@ $$
 
 Thus the sequence of random variables $X_1, X_2, X_3, ...$ has the *Markov Property*.
 
-Furthermore we see that $Pr[X_i = v | X_{i-1} = u]$ only depends on $u$ and $v$ and not on $i$ from which we can conclude that this is a *stationary* markov chain.
+Furthermore we see that $Pr[X_i = v | X_{i-1} = u]$ only depends on $u$ and $v$ and not on $i$ (e.g. how many steps we have taken so far), from which we can conclude that this is a *time-homogenous* markov chain.
 
-This means it is rather easy to transform a graph into the state diagram of a markov chain
+This means it is rather easy to transform a graph into the state-graph of a markov chain
 that models a random walk on this gaph: We replace the undirected edges $\{u, v\}$ by directed edges
 $(u, v)$ and $(v, u)$ and label them with the correct transition probabilities, $\frac{1}{d(u)}$ and $\frac{1}{d(v)}$ respectively.
 For an example see figure \ref{graph-markov}.
-
-Since each input graph is of finite size, we can define the state-transition matrix $P \in \mathbb{R}^{n \times n}$
 
 \begin{figure}
 \begin{tikzpicture}[line join=bevel]
@@ -461,23 +458,249 @@ Since each input graph is of finite size, we can define the state-transition mat
 \label{graph-markov}
 \end{figure}
 
-1. Show that $P_v = \lim{n \longrightarrow \infty} \frac{|\{i \leq n | v = v_i\}|}{n}$
-	- Proof that $P_{(u, v)} = \frac{1}{2 \cdot e}$
-	- Proof that $P_v = d(v) \cdot P_{(u, v)}$
+Since each input graph is of finite size, we can define the state-transition matrix $P \in \mathbb{R}^{n \times n}$.
 
-2. Show that the expected number of steps of a random walk of a to visit all nodes once
-	is bounded by a polynominal.
+We now whant to show the *unique* existence of a so called *stationary distribution*,
+that is a distribution $\pi$ for which:
 
-3. Show that $b$ appears with probability higher than $\frac{1}{2}$ on such a random walk.
+$\pi \cdot P = \pi$
+
+First, let us define what it means for a markov chain to be *irreducible*:
+
+irreducibility
+  ~ If we take enough steps, eventually every transition $(i, j)$ has a probability higher than zero.
+
+Or more precise:
+$\exists i \in \mathbb{N}: Pr[X_i = v | X_0 = u] > 0$ for all $u, v \in V$
+
+This simply follows from the obversation that we can derive the state-graph from the *undirected connected* input graph.
+Thus for each pair of states $(u, v)$ there is a path from $u$ to $v$, which will have probability $> 0$.
+
+\vspace{0.5cm}\begin{thm}
+For an irreducible markov chain with {\em finite} states, there is always a {\em unique stationary distribution}.
+\end{thm}
+
+\begin{proof}
+The proof requires the definition of a lot of concepts, so we are only going to specify the general idea here.
+A complete proof can be found in any book about markov chains.
+
+From the fact that we have finite many states, we see that for a markov chain of infinite size, we are going to visit at least one state
+infinitely often. This property is called {\em recurrence}.
+
+If we know a recurrent state $a$, we can compute the expected value of how often we visit another state $x$ before we return to $a$.
+In this case we can write that as vector $\nu$. We can proof that $\nu \cdot P = \nu$.
+
+If we norm $\nu$ we get our stationary distribution.
+
+To see that it is unique, we show that there is one {\em positive recurrent} state ($\pi(i) > 0$ for at least one state $i$)
+and combined with the {\em irreducibility} we get that all states are {\em positive recurrent}.
+
+A common theorem then specifies that each irreducible and positive recurrent markov chain has a unique stationary distribution.
+\end{proof}
+
+Now that we know that there is a unique stationary distribution, we can proceed to find the actual values:
+
+\vspace{0.5cm}\begin{thm}
+The stationary distribution for random walk is given by: $\pi = \frac{d(i)}{2 \cdot e}$, where $e = |E|$.
+\end{thm}
+
+\begin{proof}
+We simply show that the given value for $\pi$ fulfills the identity $\pi P = \pi$.
+
+It should be clear that $\sum_{i=0}^{n} \pi(i) = 1$ since $\sum_{i=0}^{n} d(i) = 2e$.
+(Remember: e is the number of {\em undirected} edges.)
+Furthermore:
+$$
+\begin{array}{rcl}
+\pi(i) & = & \pi P_i \\
+       & = & \sum_{j=1}^{n} \pi(j) \cdot \text{\textbf{1}}_{(\{i, j\} \in E)} \cdot \frac{1}{d(j)} \\
+\end{array}
+$$
+where $P_i$ denotes the $i$-th column of $P$.
+Substituting $\pi(j) = \frac{d(j)}{2 \cdot e}$ we get:
+
+$$
+\begin{array}{rcl}
+\pi(i) & = & \sum_{j=1}^{n} \frac{d(j)}{2e} \cdot \text{\textbf{1}}_{(\{i, j\} \in E)} \cdot \frac{1}{d(j)} \\
+       & = & \frac{1}{2e} \cdot \sum_{j=1}^{n} \text{\textbf{1}}_{(\{i, j\} \in E)} \\
+       & = & \frac{1}{2e} \cdot d(i)
+\end{array}
+$$
+\end{proof}
+
+We can now use this stationary distribution to actually answer the question of a concrete value of $P_v$.
+
+First we need to consider that the value of $P_v$ is highly depended on how we choose the *start node*. We model chosing the start node as supplying an *initial distribution* to our markov chain.
+
+Consider figure \ref{cyclic-graph}, which has
+$P = \left(\begin{matrix}0 & 1\\ 1 & 0\end{matrix}\right)$.
+If our *initial distribution* is $\nu = (1, 0)$ (that is we start at node $v_1$) we get $\nu \cdot P = (0, 1)$ and $\nu \cdot P^2 = (1, 0)$.
+So after two steps of our random walk we are back at $v_1$ with probability 1. It is clear we never reach our stationary distribution $(\frac{1}{2}, \frac{1}{2})$.
+
+However if we assume we start at each node uniformly distributed with probability $\frac{1}{n}$ we see that for our cyclic example that would mean $\nu = (\frac{1}{2}, \frac{1}{2})$, which already is our stationary distribution.
+
+\begin{figure}
+\begin{tikzpicture}[->,line join=bevel]
+  \tikzstyle{vertex}=[circle,fill=black!25,minimum size=12pt,inner sep=2pt]
+  \node[vertex] (G_1) at (-2,0)  {$v_1$};
+  \node[vertex] (G_2) at (0,0)   {$v_2$};
+  \path (G_1) edge [bend left] node[above] {1} (G_2)
+        (G_2) edge [bend left] node[below] {1} (G_1);
+\end{tikzpicture}
+\caption{A simply cyclic markov chain. For a definition of the term cyclic we refer to appropriate literature.}
+\label{cyclic-graph}
+\end{figure}
+
+It can be shown that this initial distribution will always lead to a convergence on our stationary distribition (follows from the Ergodic Theorem).
+To get an idea why this works, we can think of starting with an uniform initial distribution as conducting all possible random walks starting at all nodes at the same time. The probailities we compute are the probilites to be in state $i$ over *all* random walks.
+
+Now, finally we can see that $P_v = \pi(v)$ if we assume we start uniformly distributed. The expected number of steps beween occurences of a state in a markov chain is $\frac{1}{\pi(v)} = \frac{2e}{d(v)} =: E(v, v)$.
+
+### Computing a bound on the length of a random walk
+
+To expand on that we are going to proof an upper bound for $E(i, j)$ with $\{i, j\} \in E$.
+
+\vspace{0.5cm}\begin{thm}
+$E(u, v) \leq 2e$ for $\{u, v\} \in E$.
+\end{thm}
+
+Based on \citeNiklaus{DBLP:books/daglib/0094933} Solution to Excerise 5.9.
+\begin{proof}
+The probability of chosing $v$ if we are at node $u$ is $\frac{1}{d(u)}$.
+That means the expected number of times we have to select one of $u$ neighbours is $d(u)$,
+so we see:
+
+$E(u, v) \leq E(u, u) \cdot d(u) = \frac{2e}{d(u)} \cdot d(u) = 2e$
+Note that this is not a tight upper bound since $v$ could be reached using different edges than $(u, v)$ much earlier.
+\end{proof}
+
+Using this we can proof an upper bound for $E(i, G)$, that is the expected number of steps of a random walk
+starting at v to visit *all* nodes. We can use this as upper bound for $E(i, j)$ (of course this bound is not exactly tight, but suffices).
+
+First we should not that in an undirected connected graph, there is always a path $(v_0, v_1, \dots, v_k)$ of length less than $2n$ that reaches all nodes.
+We are not going to state the proof for that here, but you can find it in \citeNiklaus{DBLP:books/daglib/0094933} Solution to Excerise 5.10.
+
+From that we can see that:
+
+$E(a, b) \leq E(a, G) \leq \sum_{i=1}^{k} E(v_{i-1}, v_i) \leq 2n \cdot 2e = 4en$
+
+### Correctness of the decider
+
+We are now going to proof that using $8en$ as an upper bound for the steps of our random walk starting at $a$
+we are *not* going to visit $b$ with probability less than $\frac{1}{2}$ thus our decider will decide correctly
+with propability $\geq \frac{1}{2}$, which again means that our decider is a valid randomized decider.
+
+Let $T(a, b)$ denote the random variable that models the number of steps a random walk from $a$ to $b$ takes.
+The probability that our random walk starting at $a$ does not reach $b$ using $8en$ steps, equals the probability that we need to take more than $8en$
+steps to get from $a$ to $b$.
+
+\vspace{0.5cm}\begin{thm}
+Our random walk starting at $a$ will not reach $b$ with probabilty smaller than $\frac{1}{2}$:
+
+$Pr[T(a, b) \geq 8en] < \frac{1}{2}$
+\end{thm}
+
+\begin{proof}
+
+As we saw before, we have an upper bound for the expected value of $T(a, b)$ ($E(a, b) \leq 4en$).
+Since $T(a, b)$ is a positive random variable, we can apply the Markov inequality:
+
+$Pr[T(a, b) \geq 8e] \leq \frac{E(a, b)}{8e} \leq \frac{4en}{8en} = \frac{1}{2}$
+\end{proof}
+
+### Conclusion
+
+As we saw in the beginning of the chapter, if $a$ and $b$ are not part of the same connected
+component, $P_b = 0$ which means we will never reach $b$ for a random walk starting at $a$.
+
+Using the theory of markov chains we can prove that we only need
+poly-bounded many steps $8en$ to find a path from $a$ to $b$ with probability higher than $\frac{1}{2}$.
+
+Actually we saw (thanks to our rather generous upper bound) that using $8en$ steps,
+the probabilty that we *do not* reach all nodes in $G$ is less than $\frac{1}{2}$.
+This insight is important for the next chapter on *Universal Traversal Sequences*.
 
 # Universal Traversal Sequence
 
+In this chapter we will step back from the decision problems $UPATH$ and $PATH$
+and will discuss an interesting "by product" of our correctness proof in the previous chapter.
+
+We saw that using a random walk with $8en$ steps we will traverse all nodes in a graph
+with probabilty higher than $\frac{1}{2}$. If we carry out $m$ random walks we can decrease
+the probability that we do not reach all nodes:
+Let $R_i$ denote the event that we do not reach all nodes using a random walk on $G$, then we see that:
+
+$Pr[R_1, \dots, R_m] = Pr[R_1] \cdot .. \cdot Pr[R_m] < 2^{-m}$
+
+So our error decreases *exponentially*. However the number of steps $m \cdot 8en$ is still polynominal.
+We call this effect *probabilty amplification*.
+
+We can use this effect to prove that ther must be a squence of directions that carries out a random
+walk on all d-regular graphs of the same size and visits all nodes (with probabilty 1.0).
+
 ## Definition
 
-- Visit all nodes in a d-regular Graph (why d-regular: formalism, node numbering..)
+First let us define what a *d-regular graph* is: We call a graph $G = (E, V)$ *d-regular*
+iff G is connected and $\forall v \in V: d(v) = d$.
+That is, each node has the same degree $d$.
 
-## Relation to previous proof
+The constraint on the degree of each node, makes the following definition possible:
 
-- usage of probability applicifcation (only finitly many d-regular graphs of a certain size)
+We define a *traversal sequence* on such a graph as a sequence $I = (i_1, ..., i_k)$ where each $i_q \in \{0, \dots, d-1\}$.
+If each node numbers its adjacent edges from $0$ to $d-1$ this sequence is essentially a routing instruction for that graph.
+Note this sequences are valid on *all* d-regular graphs, but most likely do not describe the same route.
+
+
+## Finding the universal traversal sequence
+
+It is easy to see that in such a graph $|E| = e \leq \frac{d \cdot n}{2}$.
+
+Since there is only a finite amout amount of d-regular graphs of a certain size, let us denote $g_{n,d}$ as the number of
+all d-regular graphs with $n$ nodes.
+
+\vspace{0.5cm}\begin{thm}
+$g_{n,d} \leq n^{d \cdot n}$.
+\end{thm}
+
+Based on \citeNiklaus{DBLP:books/daglib/0094933} Solution to Excerise 5.12.
+
+\begin{proof}
+To build the adjacent edges of a nodes need to chose $d$ egdes, for each edge you can chose from at most $n$ nodes,
+so that yields *at most* $n \cdot d$ possibilities to build the adjacent edges of a node.
+Since our graph has $n$ nodes that results in *at most* $n^{nd}$ possibilities to construct the edges for a $d$-regular graph with $n$ nodes.
+
+Thus $g_{n,d} \leq n^{d \cdot n}$
+\end{proof}
+
+If we choose $i_q$ with uniform distribution for a traversal sequence $I = (i_1, ..., i_k)$,
+we see that this sequence carries out a random walk of length $k$ on each $d-regular$ graph.
+As we saw before a random walk with $k = m \cdot 8en \leq 4dn$ has a probability of less than $2^{-m}$ to *not* visit all nodes.
+
+Thus number of d-regular graphs that a given traversal sequence will not traverse completely is $g_{n, d} \cdot 2^{-m}$.
+If we make $m$ sufficiently large, such that $g_{n, d} \cdot 2^{-m} < 1$ there is a positive propability that a traversal sequence
+will traverse all nodes in all graphs. We call this sequence *Universal Traversal Sequence*.
+
+\vspace{0.5cm}\begin{thm}
+There always exsits a Universal Traversal Sequence and it has polynominally bounded length.
+\end{thm}
+
+\begin{proof}
+
+First we need to find a $m$ such that: $g_{n, d} \cdot 2^{-m} < 1$
+
+$$
+\begin{array}{rcl}
+	g_{n, d} \cdot 2^{-m} & < & 1 \\
+    n^{nd} \cdot 2^{-m} & < & 1 \\
+    \log_2 n \cdot n d + (-m) & < & 0 \\
+    \log_2 n \cdot n d & < & m
+\end{array}
+$$
+
+So there exists a traversal sequence with $k \geq 4dn \cdot \log n \cdot n d \geq g_{n, d} \cdot m$ that visits all nodes in all d-regular graphs of size n.
+
+We see that $k \in O(n^3 \log n)$ (since $d \leq n$) thus the length is indeed bounded by a polynominal.
+
+\end{proof}
 
 
