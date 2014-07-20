@@ -89,7 +89,8 @@ For a *non-deterministic* TM we need to expand this to the *maximum* number of c
 that lead to an accepting state, which is equivalent to the depth of the computation tree.
 
 Space usage in a 3 tape model is defined as the number cells on the *working tape* that where visited by the
-reading head during the computation. As before, we use the maximum of all possible halting computations
+reading head during the computation (Note: each cell can be visited multiple times, but will only counted once).
+As before, we use the maximum of all possible halting computations
 in the non-deterministic case.
 
 ## Decision problems and Complexity classes
@@ -125,7 +126,7 @@ $L = NL$.
 To get a better understanding what you can do with a TM that has a logarithmic space bound, consider the following example:
 
 Writing down all occurrences of a symbol in the input
-  ~ Intuitively one would argue that this problem requires a TM that visits each character at least once, thus this problem has a space complexity $\Omega (n)$. But since we only count head movements on our *working tape*, the actual space requirement is the space we need for noting how often the symbol has occurred so far, which is in $O(\log n)$.
+  ~ Intuitively one would argue that this problem requires a TM that needs at least $O(n)$ cells for the input and (in the worst case) $O(n \cdot \log n)$ cells for writing down the positions. Thus this problem has a space complexity of $\Omega (n)$. But since we only count cells that are visited on our *working tape*, the actual space requirement is the space we need for noting how often the symbol has occurred so far, which is in $O(\log n)$.
 
 ## $NL \subseteq P$
 
@@ -145,17 +146,17 @@ For a TM that only needs logarithmic-bounded space, we know that there are only 
 as the number of symbols that can be non-blank is bounded by $O(\log n)$. Since the number of states is finite and the head position on the tape
 can be bounded by $O(\log n)$ as well (for the input tape it is always bounded by $n$), we can give a bound on the number of configurations:
 
-$n^{O(n)} \cdot n \cdot O(\log n)) \cdot |Q| \subset O(n^k)$ for a suitably chosen $k \in \mathbb{N}$.
+$n^{O(n)} \cdot n \cdot O(\log n) \cdot |Q| \subset O(n^k)$ for a suitably chosen $k \in \mathbb{N}$.
 
 Now we need to see that this results in a poly-bounded running time for a NTM.
-Since we have an upper bound to the number of configurations, any cycle-free sequence of configuration that leads to a halting state
+Since we have an upper bound to the number of configurations, any {\em cycle-free} sequence of configuration that leads to a halting state
 is shorter than our bound. So a NTM only needs to iterate all configurations until a halting configuration is found, or
 the length of the sequence is longer than our bound.
-This can be done in polynomial running thus, $NL \subseteq P$.
+This can be done in polynomial running time, thus $NL \subseteq P$.
 
 \end{proof}
 
-This proof is given for deterministic TM, since every non-deterministic TM can be transformed to an equivalent deterministic TM (with exponentially more states, but note that is still constant with regard to the input size).
+This proof is given for a non-deterministic TM, since every non-deterministic TM can be transformed to an equivalent deterministic TM (with exponentially more states, but note that it is still constant with regard to the input size).
 
 ## Reducibility and NL-completeness
 
@@ -170,7 +171,7 @@ to a decision problem $B$ if and only if there exists a function $f$ that can be
 
 $w \in A \Leftrightarrow f(w) \in B$
 
-Naively applying the same technique here will not work, since the poly-time constraint on the function is much too loose. Since the transforming function has no log-space constraint, it could be used to solve all decision problems in $NL$ thus yielding a trivial reduction.
+Naively applying the same technique here will not work, since the poly-time constraint on the function is much too lax. Since the transforming function has no log-space constraint, it could be used to solve all decision problems in $NL$ thus yielding a trivial reduction.
 
 So, for NL-Completeness we need to add a space constraint on the transformation function:
 A decision problem $A$ is said to be *log reducible* to $B$ ($A \leq_{log} B$) if and only if there exists a function
@@ -215,8 +216,8 @@ The only space needed on the working tape is the space to store a pair of nodes 
 
 Now let $A \in NL$ via a $O(\log n)$ space-bounded machine M. As we saw in the proof of Theorem \ref{poly-running-time},
 this machine has at most polynomially many configurations on an input of length $n$.
-The desired reduction of $A$ to $PATH$ outputs for any x the
-graph in which each such configuration is a node, and the there is an edge
+The desired reduction of $A$ to $PATH$ outputs for an input $x$ the
+graph in which each configuration is a node, and the there is an edge
 from configuration $c_i$ to $c_j$ if $c_j$ is a configuration that could follow $c_i$ in the computation on
 input $x$. This can be done, for example, by producing for each configuration the finite list of possible successor configurations.
 
@@ -282,11 +283,11 @@ To conclude we see that: $L \subseteq RL \subseteq NL$
 As you might have noticed, we required a poly-bound for running time of a TM in our definition
 of $RL$, which is something we could omit in the case of deterministic and non-deterministic TM.
 In this case however the requirement is non-optional. To understand why, we construct a randomized
-TM that has a log-space bound but has no polynomially bounded runtime.
+TM that has a log-space bound but has no polynomially bounded running time.
 
 \vspace{0.5cm}\begin{thm}
 \label{randomized-poly-runtime}
-There are randomized TM that have logarithmic space use, but an exponential running-time.
+There are randomized TM that have logarithmic space use, but an exponential running time.
 \end{thm}
 
 \begin{proof}
@@ -307,7 +308,7 @@ So the expected runtime is in $O(2^n)$
 
 # Random Walk
 
-Using the previous definition for TM that can use randomization we can execute the following
+Using the previous definition for TM that can use randomization, we can execute the following
 algorithm, which we will call *RandomWalk*.
 
 ## The algorithm
@@ -342,7 +343,7 @@ The first requirement is easy to proof, since we can see from the algorithm,
 that the only state that needs to be stored on the working tape is $v$. Since
 we can encode $v$ using its node number, we need only $O(\log n)$ bits for that.
 
-Proofing the second requirement however, will compromise the most of the remainder of this chapter.
+Proofing the second requirement however, will occupy the most of the remainder of this chapter.
 
 ## Application on PATH
 
@@ -400,7 +401,7 @@ Thus RandomWalk can not decide instances of this class correctly using a polynom
 To show that our decider for UPATH based on RandomWalk really only needs to do poly-bounded many steps,
 we are going to abstract from the concrete algorithm and define a *random walk on a graph*.
 
-A *random walk on a graph $G$ starting at $a$* is a *infinite* sequence of nodes $W = (v_1, v_2, \dots)$
+A *random walk on a graph $G$ starting at $a$* is an *infinite* sequence of nodes $W = (v_1, v_2, \dots)$
 where each $v_{i+1}$ was choosen randomly under uniform distribution from the neighbor nodes of $v_i$. (so $\{v_i, v_{i+1}\}$ is an egde in $G$)
 
 We are now interested in the probability $P_v$ that a node $v$ occurs in this sequence. It should be clear that $P_v = 0$, if $v_1$ and $v$ are not part of the same connected component. It is handy for the following chapter to assume that we have a connected graph.
@@ -458,12 +459,15 @@ For an example see figure \ref{graph-markov}.
 \label{graph-markov}
 \end{figure}
 
-Since each input graph is of finite size, we can define the state-transition matrix $P \in \mathbb{R}^{n \times n}$.
+Since each input graph is of finite size, we can define the state-transition matrix $P \in \mathbb{R}^{n \times n}$ that computes for a distribution $v$
+the distribution after taking a step in our random walk. So $P^n$ will compute the probability distribution resulting from taking $n$ steps.
 
 We now want to show the *unique* existence of a so called *stationary distribution*,
 that is a distribution $\pi$ for which:
 
 $\pi \cdot P = \pi$
+
+Which means, we reached a distribution where taking further steps on our random walk does not change the probability that we are in a given state.
 
 First, let us define what it means for a markov chain to be *irreducible*:
 
@@ -487,7 +491,7 @@ A complete proof can be found in any book about markov chains.
 From the fact that we have finite many states, we see that for a markov chain of infinite size, we are going to visit at least one state
 infinitely often. This property is called {\em recurrence}.
 
-If we know a recurrent state $a$, we can compute the expected value of how often we visit another state $x$ before we return to $a$.
+If we know a recurrent state $a$, we can compute the expected value of how often we visit all other states before we return to $a$.
 In this case we can write that as vector $\nu$. We can proof that $\nu \cdot P = \nu$.
 
 If we norm $\nu$ we get our stationary distribution.
@@ -584,7 +588,7 @@ We are not going to state the proof for that here, but you can find it in \citeN
 
 From that we can see that:
 
-$E(a, b) \leq E(a, G) \leq \sum_{i=1}^{k} E(v_{i-1}, v_i) \leq 2n \cdot 2e = 4en$
+$E(a, b) \leq E(a, G) \leq \sum_{i=1}^{k} E(v_{i-1}, v_i) < 2n \cdot 2e = 4en$
 
 ### Correctness of the decider
 
@@ -607,7 +611,7 @@ $Pr[T(a, b) \geq 8en] < \frac{1}{2}$
 As we saw before, we have an upper bound for the expected value of $T(a, b)$ ($E(a, b) \leq 4en$).
 Since $T(a, b)$ is a positive random variable, we can apply the Markov inequality:
 
-$Pr[T(a, b) \geq 8e] \leq \frac{E(a, b)}{8e} \leq \frac{4en}{8en} = \frac{1}{2}$
+$Pr[T(a, b) \geq 8e] \leq \frac{E(a, b)}{8e} < \frac{4en}{8en} = \frac{1}{2}$
 \end{proof}
 
 ### Conclusion
@@ -650,7 +654,7 @@ The constraint on the degree of each node, makes the following definition possib
 
 We define a *traversal sequence* on such a graph as a sequence $I = (i_1, ..., i_k)$ where each $i_q \in \{0, \dots, d-1\}$.
 If each node numbers its adjacent edges from $0$ to $d-1$ this sequence is essentially a routing instruction for that graph.
-Note this sequences are valid on *all* d-regular graphs, but most likely do not describe the same route.
+Note: This sequences are valid on *all* d-regular graphs, but most likely do not describe the same route.
 
 ## Finding the universal traversal sequence
 
@@ -666,23 +670,23 @@ $g_{n,d} \leq n^{d \cdot n}$.
 Based on \citeNiklaus{DBLP:books/daglib/0094933} Solution to Excerise 5.12.
 
 \begin{proof}
-To build the adjacent edges of a nodes need to chose $d$ egdes, for each edge you can chose from at most $n$ nodes,
-so that yields *at most* $n \cdot d$ possibilities to build the adjacent edges of a node.
-Since our graph has $n$ nodes that results in *at most* $n^{nd}$ possibilities to construct the edges for a $d$-regular graph with $n$ nodes.
+To build the adjacent edges of a node we need to chose $d$ egdes. For each edge you can chose from at most $n$ nodes,
+so that yields {\em at most} $n \cdot d$ possibilities to build the adjacent edges of a node.
+Since our graph has $n$ nodes that results in {\em at most} $n^{nd}$ possibilities to construct the edges for a $d$-regular graph with $n$ nodes.
 
-Thus $g_{n,d} \leq n^{d \cdot n}$
+Thus $g_{n,d} \leq n^{d \cdot n}$.
 \end{proof}
 
 If we choose $i_q$ with uniform distribution for a traversal sequence $I = (i_1, ..., i_k)$,
 we see that this sequence carries out a random walk of length $k$ on each $d-regular$ graph.
 As we saw before a random walk with $k = m \cdot 8en \leq 4dn$ has a probability of less than $2^{-m}$ to *not* visit all nodes.
 
-Thus number of d-regular graphs that a given traversal sequence will not traverse completely is $g_{n, d} \cdot 2^{-m}$.
+Thus the expected number of d-regular graphs that a given traversal sequence will not traverse completely is at most $g_{n, d} \cdot 2^{-m}$.
 If we make $m$ sufficiently large, such that $g_{n, d} \cdot 2^{-m} < 1$ there is a positive probability that a traversal sequence
 will traverse all nodes in all graphs. We call this sequence *Universal Traversal Sequence*.
 
 \vspace{0.5cm}\begin{thm}
-There always exists a *Universal Traversal Sequence* and it has polynomially bounded length.
+There always exists a {\em Universal Traversal Sequence} and it has polynomially bounded length.
 \end{thm}
 
 \begin{proof}
@@ -698,7 +702,8 @@ $$
 \end{array}
 $$
 
-So there exists a traversal sequence with $k \geq 4dn \cdot \log n \cdot n d \geq g_{n, d} \cdot m$ that visits all nodes in all d-regular graphs of size n.
+So there exists a traversal sequence with $k = 4dn \cdot (\log n \cdot n d + 1)$
+that visits all nodes in all d-regular graphs of size n.
 
 We see that $k \in O(n^3 \log n)$ (since $d \leq n$) thus the length is indeed bounded by a polynomial.
 
